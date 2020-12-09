@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM, {withRouter} from 'react-dom';
+import ReactDOM, { withRouter } from 'react-dom';
 import axios from 'axios';
 import firebase, { db } from '../components/Firebase/firebase';
 import * as ROUTES from '../constants/routes';
@@ -10,7 +10,6 @@ const INITIAL_STATE = {
     error: null,
     isChecked: false,
 };
-
 
 class Login extends React.Component {
 
@@ -30,9 +29,7 @@ class Login extends React.Component {
 
     componentDidMount() {
 
-        // if you want to use localStorage.checkbox, must use === 'true'
-
-        var userobj =  JSON.parse(localStorage.getItem("rememberMe"));
+        var userobj = JSON.parse(localStorage.getItem("rememberMe"));
         console.log("retrievedObject: ", userobj);
 
         if (userobj != null) {
@@ -55,7 +52,6 @@ class Login extends React.Component {
         })
 
     }
-
 
     onSubmit = (e) => {
         e.preventDefault();
@@ -109,25 +105,27 @@ class Login extends React.Component {
         }).catch(error => {
             this.setState({ error });
         });
-        // http://expressbackend-env.eba-mmzyvbbv.us-east-1.elasticbeanstalk.com/
+
         //API Calling
         axios
-            .post('http://localhost:8888/login', {
+            .post('http://expressbackend-env.eba-mmzyvbbv.us-east-1.elasticbeanstalk.com/login', {
                 username: email,
                 password: password,
             })
             .then(response => {
                 console.log(response.data);
                 this.setState({ token: response.data });
+
+                //Check for rmb me
                 if (isChecked) {
                     var user = {
-                      username: email,
-                      password: password,
+                        username: email,
+                        password: password,
                     };
                     localStorage.setItem("rememberMe", JSON.stringify(user));
-                  } else {
+                } else {
                     localStorage.removeItem("rememberMe");
-                  }
+                }
 
                 localStorage.setItem('token', this.state.token);
 
@@ -145,33 +143,38 @@ class Login extends React.Component {
         const { email, password, error, isChecked } = this.state;
         const isInvalid = password === '' || email === '';
         return (
-            <form onSubmit={this.onSubmit}>
-                <h3>Sign In</h3>
-                <div className="form-group">
-                    <label>Email address</label>
-                    <input type="text" name="email" value={email} onChange={this.changeHandler} className="form-control" placeholder="Enter email" />
-                </div>
+            <div className="auth-wrapper">  
+                <div className="auth-inner">
+                    <form onSubmit={this.onSubmit}>
+                        <h3>Sign In</h3>
+                        <div className="form-group">
+                            <label>Email address</label>
+                            <input type="text" name="email" value={email} onChange={this.changeHandler} className="form-control" placeholder="Enter email" />
+                        </div>
 
-                <div className="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" value={password} onChange={this.changeHandler} className="form-control" placeholder="Enter password" />
-                </div>
+                        <div className="form-group">
+                            <label>Password</label>
+                            <input type="password" name="password" value={password} onChange={this.changeHandler} className="form-control" placeholder="Enter password" />
+                        </div>
 
-                <div className="form-group">
-                    <div className="custom-control custom-checkbox">
-                        <input type="checkbox" className="custom-control-input" id="customCheck1" checked={isChecked} name="RememberMe" onChange={this.onChangeCheckbox} />
-                        <label className="custom-control-label" htmlFor="customCheck1">Remember me</label>
-                    </div>
-                </div>
+                        <div className="form-group">
+                            <div className="custom-control custom-checkbox">
+                                <input type="checkbox" className="custom-control-input" id="customCheck1" checked={isChecked} name="RememberMe" onChange={this.onChangeCheckbox} />
+                                <label className="custom-control-label" htmlFor="customCheck1">Remember me</label>
+                            </div>
+                        </div>
 
-                <button type="submit" disabled={isInvalid} className="btn btn-primary btn-block">Submit</button>
-                {/* <p className="forgot-password text-right">
+                        <button type="submit" disabled={isInvalid} className="btn btn-primary btn-block">Submit</button>
+                        {/* <p className="forgot-password text-right">
                     Forgot <a href="#">password?</a>
                 </p> */}
-                {error && <p className="error">{error.message}</p>}
-                <p className="error">{this.state.errorMsg}</p>
-            </form>
+                        {error && <p className="error">{error.message}</p>}
+                        <p className="error">{this.state.errorMsg}</p>
+                    </form>
+                </div>
+            </div>
         );
+
     }
 }
 

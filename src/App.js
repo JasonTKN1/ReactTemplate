@@ -11,75 +11,61 @@ import SignUp from "./components/signup.component";
 import Home from "./components/home.component";
 import CusForm from "./components/cusform.component";
 import Logout from "./components/logout.component";
+import Timer from "./components/timer";
+import NewTimer from "./components/newTimer";
+import Navbar from "./components/navbar";
+import Example1 from "./components/example1";
+
+import {
+  Modal,
+  Button,
+  Form,
+  FormGroup,
+  FormControl,
+  ControlLabel,
+  Grid,
+  Row,
+  Col,
+} from "react-bootstrap";
 
 class App extends React.Component {
-  componentDidMount() {
-    if (localStorage.getItem("token") != null) {
-      //var token = JSON.parse(localStorage.getItem("token"));
-      var token = localStorage.getItem("token");
-      var decodedToken = decode(token);
-      console.log("Decoded " + JSON.stringify(decodedToken))
-      if (decodedToken.exp < Date.now() / 1000) {
-        var r = window.confirm("session already timeout. Do you wanna extend?");
-        if (r === true) {
-          axios
-            .get('http://localhost:8888/extendSession', {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              }
-            }).then((res) => {
-              console.log(res.status);
-              var decodedToken = decode(res);
-              console.log(decodedToken);
-              // localStorage.setItem("token", res);
-            }).catch((error) => {
-              console.log(error)
-            })
-        } else {
-          alert("token session cancelled");
-
-        }
-        localStorage.removeItem("token");
-      }
-      //   console.log(token);
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: null,
+      show: false,
+    };
   }
+  componentDidMount() {
+  }
+
+  logout() {
+    localStorage.removeItem("token");
+    window.location.href = ROUTES.SIGN_IN;
+  }
+
+  onCompletion = () => {
+    console.log("done");
+    localStorage.removeItem("timeRemainingInSeconds");
+    this.logout();
+  };
 
   render() {
     return (
       <Router>
         <div className="App">
           <div className="container">
-            <div className="navbar navbar-expand-lg navbar-light ">
-              {/* <Link className="navbar-brand" to={ROUTES.SIGN_IN}>Home</Link> */}
-            </div>
-            {localStorage.getItem('token') ? (
-              <div className="navbar navbar-expand-lg navbar-light ">
-                <Link className="navbar-brand" to={ROUTES.HOME}>Home</Link>
-                <Link className="navbar-brand" to={ROUTES.CUSFORM}>Customer Form</Link>
-                <Link className="navbar-brand" to={ROUTES.LOGOUT}>Logout</Link>
-              </div>
-            ) : (
-                <div className="navbar navbar-expand-lg navbar-light ">
-
-                  <Link className="navbar-brand" to={ROUTES.SIGN_IN}>Login</Link>
-                  <Link className="navbar-brand" to={ROUTES.SIGN_UP}>Sign up</Link>
-                </div>
-              )}
-
-          </div>
-        </div>
-        <div className="auth-wrapper">
-          <div className="auth-inner">
+            <Navbar />
+            <NewTimer />
             <Switch>
               <Route exact path={ROUTES.SIGN_UP} component={SignUp} />
+              <Route path={"./example1"} component={Example1} />
               <Route path={ROUTES.SIGN_IN} component={Login} />
               <Route path={ROUTES.SIGN_UP} component={SignUp} />
               <Route path={ROUTES.HOME} component={Home} />
               <Route path={ROUTES.CUSFORM} component={CusForm} />
               <Route path={ROUTES.LOGOUT} component={Logout} />
             </Switch>
-
           </div>
         </div>
       </Router >

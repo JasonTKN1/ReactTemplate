@@ -45,6 +45,7 @@ export default class Home extends React.Component {
         //     this.setState({ error });
         // });
 
+        //Retrieve
         db.collection('user').where('email', '==', this.state.email).get().then(authUser => {
             const data = authUser.docs.map((doc) => doc.data());
             this.setState({
@@ -54,6 +55,17 @@ export default class Home extends React.Component {
             });
             console.log(this.state.image);
         })
+
+
+        //Update
+        db.collection('user').where('email', '==', this.state.email).get().then(authUser => {
+            const data = authUser.docs.map((doc) => doc.data());
+            authUser.docs.map((doc) => {
+                doc.ref.update({ firstName: "JT" });
+              });
+        })
+
+       
         // .catch(error => {
         //     this.setState({ error });
         // });
@@ -71,7 +83,7 @@ export default class Home extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="home">
                 {/* <h3>Welcome </h3> */}
                 <h3>Welcome {this.state.firstName + ' ' + this.state.lastName}</h3>
                 <img src={this.state.image} width="300" height="300"></img>
